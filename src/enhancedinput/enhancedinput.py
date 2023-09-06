@@ -9,7 +9,7 @@ class EnhancedInput:
         self.invalid_input_message: str = Colors.RED + "Invalid input" + Colors.END
 
     """Get input from the user"""
-    def get(self, prompt: str = "", theme: Theme = None, validators: list[Validator] = []) -> str:
+    def get(self, prompt: str = "", input_type: str | int | float = str, theme: Theme = None, validators: list[Validator] = []) -> str:
         if theme is None:
             theme = self.theme
             
@@ -21,7 +21,11 @@ class EnhancedInput:
                 pass
 
         while True:
-            res = input(theme.format(prompt, hints))
+            try:
+                res = input_type(input(theme.format(prompt, hints)))
+            except ValueError:
+                print(self.invalid_input_message)
+                continue
 
             for validator in validators:
                 if not validator.valid(res):
